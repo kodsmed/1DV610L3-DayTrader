@@ -1,3 +1,0 @@
-[submodule "src/client/component/graphModule"]
-	path = src/client/component/graphModule
-	url = git+ssh://git@github.com/kodsmed/graphdrawer.git
