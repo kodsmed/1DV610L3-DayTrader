@@ -188,4 +188,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# The dist folder is used for production build only, so any development files can be ignored
+dist/
+
 # End of https://www.gitignore.io/api/node,linux,macos,windows,visualstudiocode

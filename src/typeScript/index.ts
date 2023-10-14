@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 
 const apiKey = process.env.FINNHUB_API_KEY;

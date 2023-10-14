@@ -11,7 +11,7 @@ The game is over when you run out of money or a year has passed.
 The goal is to have as much money as possible at the end of the game.
 
 The game is built in Typescript, compiled to Javascript and can be served on any web server.  
-(The project comes preconfigured with Vite, but any web server will do.)  and then accessed through a web browser.  
+(The project comes pre-configured with Vite, but any web server will do.)  and then accessed through a web browser.  
 Due to limitations in the API used, the game is limited to the US stock market and a limited number of stocks,  
 also how fast the game can be played.
 
@@ -21,7 +21,7 @@ also how fast the game can be played.
 
 1. Clone the repository
 2. Run `npm install` to install dependencies
-3. Get an API key from [Polygon.io](https://polygon.io/) and add it to the `.env` file.  
+3. Get an API key from [Finnhub.io](https://finnhub.io/register) and add it to the `.env` file.  
 4. change the name of the `.env.example` file to `.env`
 **Do not commit the API key!**   
 **NEVER SERVE API KEYS PUBLICLY!**

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphdrawer</title>
+    <script type="module" src="./typeScript/index.ts"></script>
+</head>
+  <body>
+      <!--
+        This page is a demo of the graphdrawer component and shows A WAY to use it in a HTML/JS context.
+        The component is defined in the index.js file and is imported as a module.
+        In the index.js file you also find examples of how to use the component and how to set its attributes in a pure JS context.
+
+        The surrounding HTML is just a simple page with a title and a div to contain the component, nothing on this page is specific to the component itself and can be changed as needed to fit the context.
+
+        The component does not have any dependencies on the surrounding HTML, it is self-contained and can be used in any HTML/JS context. See the README.md file for more information on how to use the component and what attributes it supports.
+      -->
+      <div class="frame">
+        <div id="inputcontainer">
+          <p>Enter an array:</p>
+          <input type="text" id="arrayInput" placeholder="[1, 2, 3, 4, 5]">
+          <button id="renderButton">Render</button>
+          <button id="clearButton">Clear</button>
+        </div>
+        <div id="graphcontainer">
+          <div class="component">
+            <jk224jv-graphdrawer> </jk224jv-graphdrawer>
+          </div>
+          <div class="settings">
+            <p id="settinginstruction">Run settings methods before rendering</p>
+            <div class="setting">
+              <p>setColors&lpar;&lsqb;</p>
+              <div>
+                <p class="inner">&lcub; <label for="line-select">graphLineColor:</label>
+                  <select id="line-select" name="line-color">
+                    <option value="red">red</option>
+                    <option value="green">green</option>
+                    <option value="lime">lime</option>
+                    <option value="blue">blue</option>
+                    <option value="yellow">yellow</option>graphLineColor:
+                    <option value="orange">orange</option>
+                    <option value="purple">purple</option>
+                    <option selected value="black">black</option>
+                    <option value="gray">gray</option>
+                    <option value="white">white</option>
+                    <option value="invalid">invalid</option>
+                  </select>
+                  &rcub;,</p>
+              </div>
+              <div>
+                <p class="inner">&lcub; <label for="dot-select">graphDotColor:</label>
+                  <select id="dot-select" name="dot-color">
+                    <option value="red">red</option>
+                    <option value="green">green</option>
+                    <option value="lime">lime</option>
+                    <option value="blue">blue</option>
+                    <option value="yellow">yellow</option>graphLineColor:
+                    <option value="orange">orange</option>
+                    <option value="purple">purple</option>
+                    <option selected value="black">black</option>
+                    <option value="gray">gray</option>
+                    <option value="white">white</option>
+                    <option value="invalid">invalid</option>
+                  </select>
+                  &rcub;,</p>
+              </div>
+              <div>
+                <p class="inner">&lcub; <label for="zero-select">zeroLineColor:</label>
+                  <select id="zero-select" name="zero-color">
+                    <option value="red">red</option>
+                    <option value="green">green</option>
+                    <option value="lime">lime</option>
+                    <option value="blue">blue</option>
+                    <option value="yellow">yellow</option>graphLineColor:
+                    <option value="orange">orange</option>
+                    <option value="purple">purple</option>
+                    <option value="black">black</option>
+                    <option selected value="gray">gray</option>
+                    <option value="white">white</option>
+                    <option value="invalid">invalid</option>
+                  </select>
+                  &rcub;,</p>
+              </div>
+              <div>
+                <p class="inner">&lcub; <label for="axis-select">axisColor:</label>
+                  <select id="axis-select" name="axis-color">
+                    <option value="red">red</option>
+                    <option value="green">green</option>
+                    <option value="lime">lime</option>
+                    <option value="blue">blue</option>
+                    <option value="yellow">yellow</option>graphLineColor:
+                    <option value="orange">orange</option>
+                    <option value="purple">purple</option>
+                    <option selected value="black">black</option>
+                    <option value="gray">gray</option>
+                    <option value="white">white</option>
+                    <option value="invalid">invalid</option>
+                  </select>
+                  &rcub;,</p>
+              </div>
+              <div>
+                <p class="inner">&lcub; <label for="label-select">labelColor:</label>
+                  <select id="label-select" name="label-color">
+                    <option value="red">red</option>
+                    <option value="green">green</option>
+                    <option value="lime">lime</option>
+                    <option value="blue">blue</option>
+                    <option value="yellow">yellow</option>graphLineColor:
+                    <option value="orange">orange</option>
+                    <option value="purple">purple</option>
+                    <option selected value="black">black</option>
+                    <option value="gray">gray</option>
+                    <option value="white">white</option>
+                    <option value="invalid">invalid</option>
+                  </select>
+                  &rcub;,</p>
+              </div>
+              <div>
+                <p class="inner">&lcub; <label for="title-select">titleColor:</label>
+                  <select id="title-select" name="title-color">
+                    <option value="red">red</option>
+                    <option value="green">green</option>
+                    <option value="lime">lime</option>
+                    <option value="blue">blue</option>
+                    <option value="yellow">yellow</option>graphLineColor:
+                    <option value="orange">orange</option>
+                    <option value="purple">purple</option>
+                    <option selected value="black">black</option>
+                    <option value="gray">gray</option>
+                    <option value="white">white</option>
+                    <option value="invalid">invalid</option>
+                  </select>
+                  &rcub;,</p>
+              </div>
+              <div>
+                <p class="inner">&lcub; <label for="background-select">backgroundColor:</label>
+                  <select id="background-select" name="background-color">
+                    <option value="red">red</option>
+                    <option value="green">green</option>
+                    <option value="lime">lime</option>
+                    <option value="blue">blue</option>
+                    <option value="yellow">yellow</option>graphLineColor:
+                    <option value="orange">orange</option>
+                    <option value="purple">purple</option>
+                    <option value="black">black</option>
+                    <option value="gray">gray</option>
+                    <option selected value="white">white</option>
+                    <option value="invalid">invalid</option>
+                  </select>
+                  &rcub;</p>
+              </div>
+              <p class="closinginner">&rsqb;&rpar;</p>
+              <button id="setColorsButton">call setColors</button>
+            </div>
+            <div class="setting">
+              <p>setAxisTitles&lpar;</p>
+              <p class="inner">&lcub; xAxis:<input type="text" id="xaxis" placeholder="Time">,</p>
+              <p class="inner">yAxis:<input type="text" id="yaxis" placeholder="Value"> &rcub;&rpar;</p>
+              <button id="setAxisButton">call setAxis</button>
+              <p class="hint">any string</p>
+            </div>
+            <div class="setting">
+              <p>setSize&lpar;</p>
+              <p class="inner">&lcub; width:<input type="text" id="width" placeholder="300px">,</p>
+              <p class="inner">height:<input type="text" id="height" placeholder="300px"> &rcub;&rpar;</p>
+              <button id="setSizeButton">call setSize</button>
+              <p class="hint">CSS values, must end in % or px.</p>
+            </div>
+            <div class="setting">
+              <p>setFontSettings&lpar;</p>
+              <p class="inner">&lcub; fontFamily:<input type="text" id="fontFamily" placeholder="Arial">,</p>
+              <p class="inner">labelFontSize:<input type="text" id="labelSize" placeholder="12">,</p>
+              <p class="inner">titleFontSize:<input type="text" id="titleSize" placeholder="16"> &rcub;&rpar;</p>
+              <button id="setFontSettingsButton">call setFontSettings</button>
+              <p class="hint">Arial,
+                Verdana,
+                Tahoma,
+                Trebuchet MS,
+                Times New Roman,
+                Georgia,
+                Garamond,
+                Courier New or
+                Brush Script MT for fontFamily. Positiv numbers for size.</p>
+            </div>
+          </div>
+        </div>
+        <div id="errorcontainer">
+
+          <p id="errormessage">error text</p>
+          <button id="resetbutton">OK, Reset</button>
+        </div>
+      </div>
+  </body>
+</html>
