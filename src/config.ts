@@ -17,3 +17,12 @@ export const STOCKS = [
       symbol: "IBM"
     }
   ]
+
+export function getStockName(ticker: string) {
+  for (const stock of STOCKS) {
+      if (stock.symbol === ticker) {
+          return stock.name;
+      }
+  }
+  return "Unknown";
+}
