@@ -190,8 +190,6 @@ $RECYCLE.BIN/
 
 # The dist folder is used for production build only, so any development files can be ignored
 dist/
-serve/
-!serve/index.html
-!serve/css/*.css
+serve/compiled-js/*
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows,visualstudiocode
