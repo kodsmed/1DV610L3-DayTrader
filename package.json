@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "devTS": "npx tsc --watch"
+    "devTS": "npx tsc --watch",
+    "build": "vite build"
   },
   "repository": {
     "type": "git",
