@@ -19,18 +19,20 @@ also how fast the game can be played.
 
 ### Installation
 
+0. Install and start the [DayTrader-BackEnd](https://github.com/kodsmed/1DV610L3-DayTrader-BackEnd)
 1. Clone the repository
-2. Run `npm install` to install dependencies
-3. Get an API key from [Finnhub.io](https://finnhub.io/register) and add it to the `.env` file.  
-4. change the name of the `.env.example` file to `.env`
-**Do not commit the API key!**   
-**NEVER SERVE API KEYS PUBLICLY!**
-3. Run `npm run launch` to start the vite server.
-4. Open `http://localhost:3000` in your browser
+2. If the backend runs on anything but localhost:8080, update the `BACKEND_URL` in `src/config.ts` to point to the backend server.
+3. Run `npm install` to install dependencies
+4. Run `npm run dev` to start the vite server.
+5. Open `http://localhost:3000` (port may vary, but it will tell you what port it uses.) in your browser
+(6). If you want a production build, run `npx tsc` followed by `npm run build` and serve the `serve` at a web server of your choice. Don't forget the backend.
 
 ### Development
 
-You can run ``npm run build` to compile the Typescript files to Javascript.
-Alternatively `npm run dev` is set up to watch for changes and compile on save.
+You can run `npm run devTS`, to continuously compile the Typescript files to Javascript.  
+It is set up to compile to the `serve` folder, which is picked up by the vite server.
+
+The internal graphdrawer module is set up as a git submodule, so should you want to update it to a later version,  
+you can run `git clone https://github.com/kodsmed/graphdrawer --recurse-submodule`.
 
 ### Playing the game
