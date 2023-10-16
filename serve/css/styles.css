@@ -35,7 +35,7 @@ main {
   display: grid;
   grid-template-columns: 85% 15%;
   grid-template-rows: 80% 20%;
-  grid-template-areas: "component right-controls" "controls right-controls";
+  grid-template-areas: "component right-field" "controls right-field";
   grid-gap: 0px;
 }
 
@@ -52,7 +52,7 @@ main {
   width: 90%;
   display: flex-column;
   padding-top: 0px;
-  margin-top: -3%;
+
   justify-content: left;
   padding-left: 10%;
   align-items: center;
@@ -86,11 +86,77 @@ main {
   margin-top: 5px;
 }
 
-#right-controls {
-  grid-area: right-controls;
+#right-field {
+  grid-area: right-field;
   height: 100%;
   width: 100%;
-  display: flex-column;
+  display:grid;
+  grid-template-rows: 60px auto 100px;
   justify-content: left;
+  align-items: top;
+}
+
+#right-field button {
+  width: 65px;
+  height: 40px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+#right-field #playAgainButton {
+  width: 130px;
+  height: 40px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+#right-field ul {
+  list-style-type: none;
+  padding-left: 0px;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+#right-field li {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: #fff;
+  width: 90%;
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+}
+
+
+#portfolioView {
+  background-color: rgba(232, 231, 231, 0.227);
+  align-items: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  padding-left: 5px;
+  overflow-y: scroll;
+}
+
+#portfolioView p {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+}
+
+h1, h2, #selectedBox {
+  display: inline;
+}
+
+#selectedBox {
+  margin-top: -65px;
+  display: flex;
+  justify-content: center;
 }
