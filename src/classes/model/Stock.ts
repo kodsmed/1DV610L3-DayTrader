@@ -12,6 +12,9 @@ export class Stock{
     }
 
     getPriceOnDay(day: number){
+        if (day < 0 || day >= this.prices.length){
+            throw new Error(`Cannot get price on day ${day} because there are only ${this.prices.length} days.`)
+        }
         return this.prices[day].valueInUSD
     }
 
