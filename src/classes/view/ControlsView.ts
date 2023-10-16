@@ -63,7 +63,7 @@ export class ControlsView {
       label.textContent = "Zoom"
       const readOut = document.createElement("p")
       readOut.id = "zoomReadOut"
-      readOut.textContent = "1%"
+      readOut.textContent = "100%"
       div.appendChild(label)
       div.appendChild(zoomSlider)
       div.appendChild(readOut)
@@ -91,7 +91,7 @@ export class ControlsView {
       div.appendChild(focusPointSlider)
       const readOut = document.createElement("p")
       readOut.id = "focusPointReadOut"
-      readOut.textContent = "1%"
+      readOut.textContent = "100%"
       div.appendChild(readOut)
       return div
     }
