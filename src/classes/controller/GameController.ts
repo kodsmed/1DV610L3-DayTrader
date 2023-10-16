@@ -170,10 +170,11 @@ export class GameController {
 
   #advanceTimeByOneDay() {
     this.#portfolio.valueOverTime.push(this.#portfolio.getTotalValueUSD(this.#currentDay))
-    this.#currentDay++
-    if (this.#currentDay >= this.#selectedStock.prices.length) {
+    if (this.#currentDay >= this.#selectedStock.prices.length - 1) {
       this.#endGame()
       return
+    } else {
+      this.#currentDay++
     }
     if(this.#currentDay > 2) {
       this.#updateTheGraph()
@@ -196,6 +197,7 @@ export class GameController {
   #endGame() {
     const valueOverTime = this.#makeStockOfThePortfolioValueOverTime()
     this.#selectedStock = valueOverTime
+    this.#updateTheGraph()
     this.#controlsView.disableButtons()
     const gameEndView = new GameEndView(this.#portfolio, this.#currentDay, this.#scores)
     gameEndView.displayEndGameMessage()
