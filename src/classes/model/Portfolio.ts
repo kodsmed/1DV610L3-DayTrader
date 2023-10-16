@@ -38,7 +38,11 @@ export class Portfolio {
   }
 
   getValueOfAllStocks(today: number) {
-    return this.#purchases.reduce((total: number, purchase: StockPurchase) => total + purchase.getValueOnDay(today), 0)
+    let totalValue = 0
+    for (const purchase of this.#purchases) {
+      totalValue += purchase.getValueOnDay(today)
+    }
+    return totalValue
   }
 
   getLiquidAssetsUSD() {
