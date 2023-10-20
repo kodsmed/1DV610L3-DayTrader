@@ -193,4 +193,3 @@ dist/
 serve/compiled-js/
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows,visualstudiocode
-serve/compiled-js/gitSubModules/
