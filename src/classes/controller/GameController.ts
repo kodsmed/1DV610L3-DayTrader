@@ -169,8 +169,8 @@ export class GameController {
     const sliceStart = Math.floor(allDatesArray.length * (this.#focusPoint / 100))
     const allowedSliceStart = Math.min(sliceStart, this.#currentDay - allowedMaxSlice)
     const sliceEnd = allowedSliceStart + allowedMaxSlice
-    const datesArray = allDatesArray.slice(allowedSliceStart, sliceEnd)
-    const valueArray = allValueArray.slice(allowedSliceStart, sliceEnd)
+    const datesArray = allDatesArray.slice(allowedSliceStart, sliceEnd + 1)
+    const valueArray = allValueArray.slice(allowedSliceStart, sliceEnd + 1)
     this.#graphComponent.setXAxisLabels(datesArray)
     this.#graphComponent.renderArrayAsGraph(valueArray)
   }
