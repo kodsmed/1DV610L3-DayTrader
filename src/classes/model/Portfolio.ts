@@ -1,13 +1,27 @@
+import { generateChecksum } from "../utilities/CheckSumGenerator.js"
+import { Stock } from "./Stock.js"
 import { StockPurchase } from "./StockPurchase.js"
 
 export class Portfolio {
   #liquidAssetsUSD: number
   #purchases: StockPurchase[]
   valueOverTime: number[] = []
+  #startingFunds = 5000
 
   constructor() {
-    this.#liquidAssetsUSD = 5000
+    this.#liquidAssetsUSD = this.#startingFunds
     this.#purchases = []
+  }
+
+  #setLiquidAssets(liquidAssetsUSD: number) {
+    // only to be used when loading portfolio state
+    if(liquidAssetsUSD < 0) throw new Error('Liquid assets cannot be negative')
+    this.#liquidAssetsUSD = liquidAssetsUSD
+  }
+
+  #setPurchases(purchases: StockPurchase[]) {
+    // only to be used when loading portfolio state
+    this.#purchases = purchases
   }
 
   getPurchasesBySymbol(ticker: string) {
@@ -50,7 +64,14 @@ export class Portfolio {
   }
 
   getTotalValueUSD(today: number) {
-    return this.#liquidAssetsUSD + this.getValueOfAllStocks(today)
+    const sum = (this.#liquidAssetsUSD + this.getValueOfAllStocks(today))
+    return Math.round(sum * 100) / 100
+  }
+
+  getPercentageChange(today: number) {
+    const change = this.getTotalValueUSD(today) - this.#startingFunds
+    const percentageChange = (change / this.#startingFunds) * 100
+    return Math.round(percentageChange * 100) / 100
   }
 
   addPurchase(purchase: StockPurchase) {
@@ -85,5 +106,35 @@ export class Portfolio {
     } catch (error) {
       return
     }
+  }
+
+  async savePortfolioState() {
+    const serializedPortfolio = {
+    liquidAssetsUSD: this.getLiquidAssetsUSD(),
+    purchases: this.#purchases.map((purchase: StockPurchase) => ({
+        symbol: purchase.symbol,
+        buyPrice: purchase.buyPricePerStock,
+        quantity: purchase.quantity
+        })
+      )
+    }
+    const jsonPortfolio = JSON.stringify(serializedPortfolio)
+    const checksum = await generateChecksum(jsonPortfolio)
+    localStorage.setItem('portfolio', jsonPortfolio)
+    localStorage.setItem('portfolioChecksum', checksum)
+  }
+
+  async loadPortfolioState(stocks: Stock[]) {
+    const serializedPortfolioData = await JSON.parse(localStorage.getItem('portfolio') || '{}');
+    const checksum = await generateChecksum(JSON.stringify(serializedPortfolioData))
+    if (checksum !== localStorage.getItem('portfolioChecksum')) {
+      throw new Error('Portfolio data is corrupt')
+    }
+    const stockPurchases: StockPurchase[] = serializedPortfolioData.purchases.map((purchaseData: { symbol: string; buyPrice: number; quantity: number; }) => {
+        const stock = stocks.find(stock => stock.symbol === purchaseData.symbol);
+        return new StockPurchase(stock as Stock, purchaseData.buyPrice, purchaseData.quantity);
+    });
+    this.#setLiquidAssets(serializedPortfolioData.liquidAssetsUSD)
+    this.#setPurchases(stockPurchases)
   }
 }

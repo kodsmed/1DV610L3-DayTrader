@@ -307,6 +307,7 @@ export class GameController {
       throw new Error("Checksums do not match, cannot load game state")
     }
     const gameState = JSON.parse(serializedState);
+    // GTP helped with this map function
     this.#stocks = gameState.stocks.map((stockData: { name: string, symbol: string, prices: { date: string, valueInUSD: number }[] }) => {
       return new Stock(stockData.name, stockData.symbol, stockData.prices.map(this.#convertToValueOnDay))
     })
