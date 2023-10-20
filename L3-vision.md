@@ -19,7 +19,7 @@ Anyone who wants to play a game where you buy and sell stocks, but don't want to
 
 ☑ The game should use the graphdrawer-component to draw a graph of the stock price over time.
 
-☑ The game should use the Polygon.io API to get stock prices.
+☑ The game should use the Finnhub.io API to get stock prices.
 
 ☑ The system should not overstep the API limits.
 
