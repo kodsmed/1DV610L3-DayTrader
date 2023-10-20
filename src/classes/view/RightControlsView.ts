@@ -148,13 +148,13 @@ export class RightControlsView {
 
     #addButtonClickListeners(){
       const buyButtonsField = this.#getElementById('buyButtonsField')
-      buyButtonsField.addEventListener('click', (event) => {
+      buyButtonsField.addEventListener('mousedown', (event) => {
         const target = event.target as HTMLButtonElement
         this.#emitBuyButtonClickedEvent(target.id)
       })
 
       const sellButtonsField = this.#getElementById('sellButtonsField')
-      sellButtonsField.addEventListener('click', (event) => {
+      sellButtonsField.addEventListener('mousedown', (event) => {
         const target = event.target as HTMLButtonElement
         this.#emitSellButtonClickedEvent(target.id)
       })
