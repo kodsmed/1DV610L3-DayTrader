@@ -111,6 +111,9 @@ export class GameController {
         const liquidAssets = this.#portfolio.getLiquidAssetsUSD()
         const stockPrice = this.#selectedStock.getPriceOnDay(this.#currentDay)
         const quantity = Math.floor(liquidAssets / stockPrice)
+        if (quantity === 0) {
+          return
+        }
         this.#buyStock(quantity)
         return
       }
@@ -124,8 +127,9 @@ export class GameController {
 
     document.addEventListener("sellButtonClicked", (event: Event) => {
       const customEvent = event as CustomEvent
-      if (customEvent.detail.id === 'sellMax') {
+      if (customEvent.detail.id === 'sellAll') {
         const quantity = this.#portfolio.getQuantityBySymbol(this.#selectedStock.symbol)
+        console.log(quantity)
         this.#sellStock(quantity)
         return
       }

@@ -90,12 +90,13 @@ export class Portfolio {
       if (purchases.length === 0 || quantity > this.getQuantityBySymbol(ticker)) {
         return
       }
-
+      let indexOfPurchase = 0
       while (quantity > 0) {
-        const purchase = purchases[0]
+        const purchase = purchases[indexOfPurchase]
         const quantityToSell = Math.min(quantity, purchase.quantity)
         quantity -= quantityToSell
         purchase.reduceQuantity(quantityToSell)
+        indexOfPurchase++
       }
 
       // remove any purchases that have no quantity left
