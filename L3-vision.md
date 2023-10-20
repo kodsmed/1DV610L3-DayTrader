@@ -17,11 +17,11 @@ Anyone who wants to play a game where you buy and sell stocks, but don't want to
 
 ## Requirements
 
-☑ The game should use the graphdrawer-component to draw a graph of the stock price over time.
-
 ☑ The game should use the Finnhub.io API to get stock prices.
 
 ☑ The system should not overstep the API limits.
+
+☑ The game should use the graphdrawer-component to draw a graph of the stock price over time.
 
 ☑ A player should be able to "buy" and "sell" stocks, and see their portfolio.
 
