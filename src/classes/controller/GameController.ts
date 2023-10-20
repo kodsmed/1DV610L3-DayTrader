@@ -7,6 +7,8 @@ import jk224jvGraphdrawer from './../../gitSubModules/graphModule/components/gra
 import { Score } from "./../model/Score.js"
 import { GameEndView } from "./../view/GameEndView.js"
 import { ValueOnDay } from "./../model/ValueOnDay.js"
+import { generateChecksum } from "../utilities/CheckSumGenerator.js"
+import { ContinueQuestions } from "../view/ContinueQuestion.js"
 
 export class GameController {
   #stocks: Stock[]
@@ -38,16 +40,29 @@ export class GameController {
     this.#selectedHeader.textContent = this.#selectedStock.name
   }
 
-  startGame() {
+  async startGame() {
     this.#portfolio = new Portfolio()
     this.#selectedStock = this.#stocks[0]
     this.#currentDay = 0
     this.#portfolio.valueOverTime = []
-    this.#advanceTimeByDays(3)
     this.#addEventListeners()
+    if (this.#isThereASavedGame()) {
+      new ContinueQuestions().displayContinueQuestion()
+    } else {
+      this.#newGame()
+    }
+  }
+
+  #newGame() {
+    this.#advanceTimeByDays(3)
+    this.#finalizeGameStart()
+  }
+
+  #finalizeGameStart() {
     this.#loadScoresFromLocalStorage()
     this.#updateTheGraph()
     this.#updateThePortfolioView()
+    this.#controlsView.enableButtons()
   }
 
   #addEventListeners() {
@@ -70,7 +85,6 @@ export class GameController {
 
     document.addEventListener("graphViewChange", (event: Event) => {
       const customEvent = event as CustomEvent
-      console.log("graphViewChange event received", customEvent.detail.zoomLevel, customEvent.detail.focusPoint)
       this.#zoomLevel = customEvent.detail.zoomLevel
       this.#focusPoint = customEvent.detail.focusPoint
       this.#updateTheGraph()
@@ -82,13 +96,11 @@ export class GameController {
 
     document.addEventListener("newHighScore", (event: Event) => {
       const customEvent = event as CustomEvent
-      console.log ("newHighScore event received", customEvent.detail.scores)
       this.#scores = customEvent.detail.scores
       this.#saveScoresToLocalStorage()
     })
 
     document.addEventListener("buyButtonClicked", (event: Event) => {
-      console.log('buyStock event received')
       const customEvent = event as CustomEvent
       if (customEvent.detail.id === 'buyMax') {
         const liquidAssets = this.#portfolio.getLiquidAssetsUSD()
@@ -128,12 +140,22 @@ export class GameController {
       rightField.innerHTML = ""
       this.#rightControlsView = new RightControlsView()
       this.#controlsView.enableButtons()
+      this.#clearSavedGameState()
       this.startGame()
     })
+
+    document.addEventListener("continueGame", async () => {
+      await this.#loadGameState()
+      this.#finalizeGameStart()
+    })
+
+    window.onbeforeunload = () => {
+      this.#saveGameState()
+    }
   }
 
   #updateTheGraph() {
-    this.#selectedHeader.textContent = this.#selectedStock.name
+    this.#selectedHeader.textContent = this.#selectedStock.name + " (Day " + this.#currentDay + " of " + (this.#selectedStock.prices.length - 1) + ")"
     this.#graphComponent.setAxisTitles({ xAxis: 'Month and Day', yAxis: 'Value in $' })
     const allDatesArray = this.#selectedStock.datesArray
     const allValueArray = this.#selectedStock.valueArray
@@ -195,6 +217,7 @@ export class GameController {
   }
 
   #endGame() {
+    this.#clearSavedGameState()
     const valueOverTime = this.#makeStockOfThePortfolioValueOverTime()
     this.#selectedStock = valueOverTime
     this.#updateTheGraph()
@@ -232,5 +255,68 @@ export class GameController {
 
   #saveScoresToLocalStorage() {
     localStorage.setItem("DayTraderScores", JSON.stringify(this.#scores))
+  }
+
+  #isThereASavedGame() {
+    const gameState = localStorage.getItem('gameState');
+    const portfolio = localStorage.getItem('portfolio');
+    if (gameState != null && portfolio != null) {
+      return true
+    }
+    return false
+  }
+
+  #clearSavedGameState() {
+    localStorage.removeItem('gameState');
+    localStorage.removeItem('gameStateChecksum');
+    localStorage.removeItem('portfolio');
+    localStorage.removeItem('portfolioChecksum');
+  }
+
+  async #saveGameState() {
+    if (this.#currentDay <= 3) {
+      // Don't save game state until after the first 3 days, the array is too small to render.
+      return
+    }
+    if (this.#currentDay >= this.#selectedStock.prices.length - 1) {
+      // Don't save game state if the game is over
+      return
+    }
+    const gameState = {
+        stocks: this.#stocks,
+        currentDay: this.#currentDay
+    };
+
+    const serializedState = JSON.stringify(gameState);
+    const checksum = await generateChecksum(serializedState);
+    localStorage.setItem('gameState', serializedState);
+    localStorage.setItem('gameStateChecksum', checksum);
+
+    this.#portfolio.savePortfolioState();
+  }
+
+  async #loadGameState() {
+    const serializedState = localStorage.getItem('gameState');
+    const storedChecksum = localStorage.getItem('gameStateChecksum');
+    if (!serializedState || !storedChecksum) {
+      throw new Error("Could not load game state from local storage")
+    }
+
+    const checksum = await generateChecksum(serializedState);
+    if (checksum !== storedChecksum) {
+      throw new Error("Checksums do not match, cannot load game state")
+    }
+    const gameState = JSON.parse(serializedState);
+    this.#stocks = gameState.stocks.map((stockData: { name: string, symbol: string, prices: { date: string, valueInUSD: number }[] }) => {
+      return new Stock(stockData.name, stockData.symbol, stockData.prices.map(this.#convertToValueOnDay))
+    })
+
+    this.#selectedStock = this.#stocks[0]
+    this.#currentDay = gameState.currentDay;
+    await this.#portfolio.loadPortfolioState(this.#stocks);
+  }
+
+ #convertToValueOnDay (priceData: { date: string; valueInUSD: number; }) {
+    return new ValueOnDay(new Date(priceData.date), priceData.valueInUSD);
   }
 }
