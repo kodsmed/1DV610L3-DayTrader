@@ -1,4 +1,0 @@
-[submodule "src/gitSubModules/graphModule"]
-	path = src/gitSubModules/graphModule
-	url = https://github.com/kodsmed/graphdrawer.git
-	branch = main
