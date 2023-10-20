@@ -207,7 +207,7 @@ export class GameController {
     } else {
       this.#currentDay++
     }
-    if(this.#currentDay > 2) {
+    if(this.#currentDay > 1) {
       this.#updateTheGraph()
       this.#updateThePortfolioView()
     }
