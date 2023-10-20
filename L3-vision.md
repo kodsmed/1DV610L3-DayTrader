@@ -32,10 +32,7 @@ Anyone who wants to play a game where you buy and sell stocks, but don't want to
 ☑ The player should be able to set the game speed, to make time skip faster or slower.  
 ☑ Options should be: 1day, 2days, 1week, 2weeks, 1month.  
 
-☑ The player should be able to view the graph of a stock, to see how the price has changed over time.
-
 ☑ The player should be able to see sections of the graph, to see how the price has changed over time.  
-☑ Section sizes should be: 1day, 2days, 1week, 2weeks, 1month.
 
 ☑ When the player leaves the game, the game should be saved, so that the player can continue where they left off.
 
