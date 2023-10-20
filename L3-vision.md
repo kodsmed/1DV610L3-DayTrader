@@ -17,32 +17,31 @@ Anyone who wants to play a game where you buy and sell stocks, but don't want to
 
 ## Requirements
 
-The game should use the graphdrawer-component to draw a graph of the stock price over time.
+☑ The game should use the graphdrawer-component to draw a graph of the stock price over time.
 
-The game should use the Polygon.io API to get stock prices.
+☑ The game should use the Polygon.io API to get stock prices.
 
-The system should not overstep the API limits.
+☑ The system should not overstep the API limits.
 
-A player should be able to "buy" and "sell" stocks, and see their portfolio.
+☑ A player should be able to "buy" and "sell" stocks, and see their portfolio.
 
-The player should be able to see the current price of a stock.
+☑ The player should be able to see the current price of a stock.
 
-The player should be able to see the current value of their portfolio.
+☑ The player should be able to see the current value of their portfolio.
 
-The player should be able to set the game speed, to make time skip faster or slower.  
-Options should be: 1day, 2days, 1week, 2weeks, 1month.  
-At jumps over 1 day, the game should "guess" the price of the stock, based on the previous price and the current price.
+☑ The player should be able to set the game speed, to make time skip faster or slower.  
+☑ Options should be: 1day, 2days, 1week, 2weeks, 1month.  
 
-The player should be able to view the graph of a stock, to see how the price has changed over time.
+☑ The player should be able to view the graph of a stock, to see how the price has changed over time.
 
-The player should be able to see sections of the graph, to see how the price has changed over time.  
-Section sizes should be: 1day, 2days, 1week, 2weeks, 1month.
+☑ The player should be able to see sections of the graph, to see how the price has changed over time.  
+☑ Section sizes should be: 1day, 2days, 1week, 2weeks, 1month.
 
-When the player leaves the game, the game should be saved, so that the player can continue where they left off.
+☑ When the player leaves the game, the game should be saved, so that the player can continue where they left off.
 
-When the player enters the game, they should be able to continue where they left off.
+☑ When the player enters the game, they should be able to continue where they left off.
 
-When the game is over, the player should be able to see their score and compare it to other players.
+☑ When the game is over, the player should be able to see their score and compare it to other players.
 
 ## Tech stack
 
