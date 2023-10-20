@@ -116,7 +116,8 @@ export class Portfolio {
         buyPrice: purchase.buyPricePerStock,
         quantity: purchase.quantity
         })
-      )
+    ),
+    valueOverTime: this.valueOverTime
     }
     const jsonPortfolio = JSON.stringify(serializedPortfolio)
     const checksum = await generateChecksum(jsonPortfolio)
@@ -134,6 +135,7 @@ export class Portfolio {
         const stock = stocks.find(stock => stock.symbol === purchaseData.symbol);
         return new StockPurchase(stock as Stock, purchaseData.buyPrice, purchaseData.quantity);
     });
+    this.valueOverTime = serializedPortfolioData.valueOverTime
     this.#setLiquidAssets(serializedPortfolioData.liquidAssetsUSD)
     this.#setPurchases(stockPurchases)
   }
