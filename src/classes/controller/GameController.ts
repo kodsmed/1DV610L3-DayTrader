@@ -168,13 +168,13 @@ export class GameController {
     this.#graphComponent.setAxisTitles({ xAxis: 'Month and Day', yAxis: 'Value in $' })
     const allDatesArray = this.#selectedStock.datesArray
     const allValueArray = this.#selectedStock.valueArray
-    const maxSlice = 3 + Math.floor(allDatesArray.length * (this.#zoomLevel / 100))
-    const allowedMaxSlice = Math.min(maxSlice, this.#currentDay)
-    const sliceStart = Math.floor(allDatesArray.length * (this.#focusPoint / 100))
-    const allowedSliceStart = Math.min(sliceStart, this.#currentDay - allowedMaxSlice)
-    const sliceEnd = allowedSliceStart + allowedMaxSlice
-    const datesArray = allDatesArray.slice(allowedSliceStart, sliceEnd + 1)
-    const valueArray = allValueArray.slice(allowedSliceStart, sliceEnd + 1)
+    const minimumRenderableArrayLength = 2
+    const rangeToRender = minimumRenderableArrayLength + Math.floor(this.#currentDay * (this.#zoomLevel / 100))
+    const allowedRange = Math.min(rangeToRender, this.#currentDay)
+    const focusedRangeStartPoint = Math.floor(this.#currentDay - allowedRange * (this.#focusPoint / 100))
+    const focusedRangeEndPoint = focusedRangeStartPoint + allowedRange
+    const datesArray = allDatesArray.slice(focusedRangeStartPoint, focusedRangeEndPoint + 1)
+    const valueArray = allValueArray.slice(focusedRangeStartPoint, focusedRangeEndPoint + 1)
     this.#graphComponent.setXAxisLabels(datesArray)
     this.#graphComponent.renderArrayAsGraph(valueArray)
   }
