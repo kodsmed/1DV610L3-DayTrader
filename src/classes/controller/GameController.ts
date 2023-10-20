@@ -3,7 +3,6 @@ import { StockPurchase } from "./../model/StockPurchase.js"
 import { Portfolio } from "./../model/Portfolio.js"
 import { ControlsView } from "./../view/ControlsView.js"
 import { RightControlsView } from "./../view/RightControlsView.js"
-import jk224jvGraphdrawer from './../../gitSubModules/graphModule/components/graphdrawer/graphdrawer.js'
 import { Score } from "./../model/Score.js"
 import { GameEndView } from "./../view/GameEndView.js"
 import { ValueOnDay } from "./../model/ValueOnDay.js"
@@ -30,7 +29,7 @@ export class GameController {
     this.#stocks = stocks
     this.#selectedStock = stocks[0]
     this.#portfolio = new Portfolio()
-    this.#graphComponent = document.querySelector('jk224jv-graphdrawer') as any
+    this.#graphComponent = document.querySelector('jk224jv-graphdrawer')
     this.#graphComponent.setAxisTitles({ xAxis: 'Month and Day', yAxis: 'Value in $' })
     const selectedHeader = document.querySelector("#selected")
     if (!selectedHeader) {
@@ -45,6 +44,7 @@ export class GameController {
     this.#selectedStock = this.#stocks[0]
     this.#currentDay = 0
     this.#portfolio.valueOverTime = []
+    this.#showFiveSecondsWelcomeMessage()
     this.#addEventListeners()
     if (this.#isThereASavedGame()) {
       new ContinueQuestions().displayContinueQuestion()
@@ -53,6 +53,11 @@ export class GameController {
     }
   }
 
+  #showFiveSecondsWelcomeMessage() {
+    this.#graphComponent.clearCanvas()
+
+    const canvas = document.querySelector("#canvas")
+  }
   #newGame() {
     this.#advanceTimeByDays(3)
     this.#finalizeGameStart()
