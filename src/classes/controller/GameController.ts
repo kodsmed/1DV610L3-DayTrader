@@ -59,7 +59,7 @@ export class GameController {
     const canvas = document.querySelector("#canvas")
   }
   #newGame() {
-    this.#advanceTimeByDays(3)
+    this.#advanceTimeByDays(1)
     this.#finalizeGameStart()
   }
 
