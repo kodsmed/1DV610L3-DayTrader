@@ -1,141 +1,167 @@
-import { STOCKS } from "../../config.js"
-import { Portfolio } from "../model/Portfolio.js"
+import { STOCKS } from '../../config.js'
+import { Portfolio } from '../model/Portfolio.js'
 
 export class RightControlsView {
   stockSelector: HTMLSelectElement
   #portfolioView: HTMLDivElement
 
     constructor() {
-      this.#buildRightControlsView()
-      this.stockSelector = document.querySelector("#stockSelector") as HTMLSelectElement
-      this.#portfolioView = document.querySelector("#portfolioView") as HTMLDivElement
+      this.#buildRightElementContent()
+      this.stockSelector = document.querySelector('#stockSelector') as HTMLSelectElement
+      this.#portfolioView = document.querySelector('#portfolioView') as HTMLDivElement
+      this.#addSelectorChangeListener(this.stockSelector)
+      this.#addButtonClickListeners()
     }
 
-    #buildRightControlsView() {
-      const rightControlsView = document.querySelector("#right-field")
-      if (!rightControlsView) {
-        throw new Error("Could not find rightControls element")
+    #getElementById(id: String) : HTMLElement {
+      const element = document.querySelector(`#${id}`)
+      if (!element) {
+        throw new Error(`Could not find #${id} element`)
       }
-      const stockSelector = document.createElement("select")
-      stockSelector.id = "stockSelector"
-      rightControlsView.appendChild(stockSelector)
-      this.stockSelector = stockSelector
+      return element as HTMLElement
+    }
+
+    #buildRightElementContent() {
+      const rightControlsView = this.#getElementById('right-field')
+      this.#appendStockSelectorOn(rightControlsView)
+      this.#appendPortfolioViewOn(rightControlsView)
+      this.#appendButtonField(rightControlsView)
+    }
+
+    #appendStockSelectorOn(parent: HTMLElement) {
+      const stockSelector = document.createElement('select')
+      stockSelector.id = 'stockSelector'
 
       STOCKS.forEach((stock) => {
-        const option = document.createElement("option")
+        const option = document.createElement('option')
         option.value = stock.symbol
         option.text = stock.name
         stockSelector.appendChild(option)
       })
+      parent.appendChild(stockSelector)
+    }
 
-      this.stockSelector.addEventListener("change", () => {
+    #appendPortfolioViewOn(parent: HTMLElement) {
+      const portfolioView = document.createElement('div')
+      portfolioView.id = 'portfolioView'
+
+      const ids = [
+        'liquidAssets', 'stockQuantity', 'stockInvestmentCost', 'stockCurrentValue', 'stockValue'
+      ]
+      const contents = [
+        'Liquid assets: $1000', 'Stock quantity: 0', 'Investment cost: $0', 'Current price/stock: $0', 'Investment value: $0'
+      ]
+      this.#appendParagraphElements(ids, contents, portfolioView)
+
+      const portfolioList = document.createElement('ul')
+      portfolioList.id = 'portfolioList'
+      portfolioView.appendChild(portfolioList)
+      parent.appendChild(portfolioView)
+    }
+
+    #appendParagraphElements(ids: string[], contents: string[], parent: HTMLElement) {
+      if (ids.length != contents.length) {
+        throw new Error('appendParagraphElements: Illegal argument, arrays of different length.')
+      }
+      for (let i = 0; i < ids.length; i++) {
+        const pElement = document.createElement('p')
+        pElement.id = ids[i]
+        pElement.textContent = contents[i]
+        parent.appendChild(pElement)
+      }
+    }
+
+    #appendButtonField(parent: HTMLElement) {
+      const buttonField = document.createElement('div')
+      const quantityForBuyButtons = ['1', '5', '10', 'Max']
+      const quantityForSellButtons = ['1', '5', '10', 'All']
+
+      this.#appendBuyButtonsFieldOn(buttonField, quantityForBuyButtons)
+      this.#appendSellButtonsFieldOn(buttonField, quantityForSellButtons)
+      parent.appendChild(buttonField)
+
+    }
+
+    #appendBuyButtonsFieldOn(parent: HTMLElement, quantities: string[]) {
+      const prefixes = ['buy', 'Buy']
+      const buyButtonsField = this.#createButtonsField('buyButtonsField', prefixes, quantities)
+      buyButtonsField.style.display = 'flex'
+      buyButtonsField.style.justifyContent = 'space-evenly'
+      parent.appendChild(buyButtonsField)
+    }
+
+    #appendSellButtonsFieldOn(parent: HTMLElement, quantities: string[]) {
+      const prefixes = ['sell', 'Sell']
+      const sellButtonsField = this.#createButtonsField('sellButtonsField', prefixes, quantities)
+      sellButtonsField.style.display = 'flex'
+      sellButtonsField.style.justifyContent = 'space-evenly'
+      parent.appendChild(sellButtonsField)
+    }
+
+    #createButtonsField(fieldId:string, prefixes: string[], quantities: string[]) {
+      const innerDiv = document.createElement('div')
+      innerDiv.id = fieldId
+      for (let i = 0; i < quantities.length; i++) {
+        const button = document.createElement('button')
+        button.id = `${prefixes[0]}${quantities[i]}`
+        button.textContent = `${prefixes[1]} ${quantities[i]}`
+        innerDiv.appendChild(button)
+      }
+      return innerDiv
+    }
+
+    updatePortfolioView(portfolio : Portfolio, currentDay: number, currentPrice: number) {
+      const liquidAssets = this.#getElementById('liquidAssets')
+      liquidAssets.textContent = `Liquid assets: $${portfolio.getLiquidAssetsUSD().toFixed(2)}`
+
+      const stockQuantity = this.#getElementById('stockQuantity')
+      stockQuantity.textContent = `Stock quantity: ${portfolio.getQuantityBySymbol(this.stockSelector.value)}`
+
+      const stockCurrentValue = this.#getElementById('stockCurrentValue')
+      stockCurrentValue.textContent = `Current price/stock: $${currentPrice.toFixed(2)}`
+
+      const stockInvestmentCost = this.#getElementById('stockInvestmentCost')
+      stockInvestmentCost.textContent = `Investment cost: $${portfolio.getCostBySymbol(this.stockSelector.value).toFixed(2)}`
+
+      const stockValue = this.#getElementById('stockValue')
+      stockValue.textContent = `Investment value: $${portfolio.getTotalValueBySymbol(this.stockSelector.value, currentDay).toFixed(2)}`
+
+      this.#updatePortfolioList(portfolio)
+    }
+
+    #updatePortfolioList(portfolio : Portfolio){
+      const portfolioList = this.#getElementById('portfolioList') as HTMLUListElement
+      portfolioList.innerHTML = ''
+      const stockPurchases = portfolio.getPurchasesBySymbol(this.stockSelector.value)
+      stockPurchases.forEach((purchase) => {
+        const listItem = document.createElement('li')
+        listItem.textContent = `Purchased ${purchase.quantity} shares for $${purchase.buyPricePerStock.toFixed(2)}`
+        portfolioList.appendChild(listItem)
+      })
+    }
+
+    #addSelectorChangeListener(stockSelector: HTMLElement) {
+      stockSelector.addEventListener('change', () => {
         this.#emitStockSelectedEvent()
       })
-
-      const portfolioView = document.createElement("div")
-      portfolioView.id = "portfolioView"
-      rightControlsView.appendChild(portfolioView)
-      this.#portfolioView = portfolioView
-      this.#buildPortfolioView()
-      this.#buildActionButtonsField()
     }
 
-    #buildPortfolioView() {
-      const portfolioView = document.querySelector("#portfolioView")
-      if (!portfolioView) {
-        throw new Error("Could not find portfolioView element")
-      }
-      const liquidAssets = document.createElement("p")
-      liquidAssets.id = "liquidAssets"
-      portfolioView.appendChild(liquidAssets)
-      liquidAssets.textContent = "Liquid assets: $1000"
-      const stockQuantity = document.createElement("p")
-      stockQuantity.id = "stockQuantity"
-      stockQuantity.textContent = "Stock quantity: 0"
-      portfolioView.appendChild(stockQuantity)
-      const stockInvestmentCost = document.createElement("p")
-      stockInvestmentCost.id = "stockInvestmentCost"
-      portfolioView.appendChild(stockInvestmentCost)
-      stockInvestmentCost.textContent = "Investment cost: $0"
-      const stockCurrentValue = document.createElement("p")
-      stockCurrentValue.id = "stockCurrentValue"
-      portfolioView.appendChild(stockCurrentValue)
-      stockCurrentValue.textContent = "Current price/stock: $0"
-      const stockValue = document.createElement("p")
-      stockValue.id = "stockValue"
-      portfolioView.appendChild(stockValue)
-      stockValue.textContent = "Investment value: $0"
-      const portfolioList = document.createElement("ul")
-      portfolioList.id = "portfolioList"
-      portfolioView.appendChild(portfolioList)
-    }
-
-    #buildActionButtonsField() {
-      const rightControlsView = document.querySelector("#right-field")
-      if (!rightControlsView) {
-        throw new Error("Could not find rightControls element")
-      }
-      const actionButtonsField = document.createElement("div")
-      actionButtonsField.id = "actionButtonsField"
-      rightControlsView.appendChild(actionButtonsField)
-
-      const buyButtonsField = document.createElement("div")
-      buyButtonsField.id = "buyButtonsField"
-      actionButtonsField.appendChild(buyButtonsField)
-      const buyButton = document.createElement("button")
-      buyButton.id = "buy1"
-      buyButton.textContent = "Buy"
-      buyButtonsField.appendChild(buyButton)
-      const buyFiveButton = document.createElement("button")
-      buyFiveButton.id = "buy5"
-      buyFiveButton.textContent = "Buy 5"
-      buyButtonsField.appendChild(buyFiveButton)
-      const buyTenButton = document.createElement("button")
-      buyTenButton.id = "buy10"
-      buyTenButton.textContent = "Buy 10"
-      buyButtonsField.appendChild(buyTenButton)
-      const buyMaxButton = document.createElement("button")
-      buyMaxButton.id = "buyMax"
-      buyMaxButton.textContent = "Buy Max"
-      buyButtonsField.appendChild(buyMaxButton)
-
-      const sellButtonField = document.createElement("div")
-      sellButtonField.id = "sellButtonField"
-      actionButtonsField.appendChild(sellButtonField)
-      const sellButton = document.createElement("button")
-      sellButton.id = "sell1"
-      sellButton.textContent = "Sell"
-      sellButtonField.appendChild(sellButton)
-      const sellFiveButton = document.createElement("button")
-      sellFiveButton.id = "sell5"
-      sellFiveButton.textContent = "Sell 5"
-      sellButtonField.appendChild(sellFiveButton)
-      const sellTenButton = document.createElement("button")
-      sellTenButton.id = "sell10"
-      sellTenButton.textContent = "Sell 10"
-      sellButtonField.appendChild(sellTenButton)
-      const sellMaxButton = document.createElement("button")
-      sellMaxButton.id = "sellMax"
-      sellMaxButton.textContent = "Sell All"
-      sellButtonField.appendChild(sellMaxButton)
-
-      buyButtonsField.addEventListener("click", (event) => {
+    #addButtonClickListeners(){
+      const buyButtonsField = this.#getElementById('buyButtonsField')
+      buyButtonsField.addEventListener('click', (event) => {
         const target = event.target as HTMLButtonElement
         this.#emitBuyButtonClickedEvent(target.id)
       })
-      sellButtonField.addEventListener("click", (event) => {
+
+      const sellButtonsField = this.#getElementById('sellButtonsField')
+      sellButtonsField.addEventListener('click', (event) => {
         const target = event.target as HTMLButtonElement
         this.#emitSellButtonClickedEvent(target.id)
       })
-
-      buyButtonsField.style.display = "flex"
-      buyButtonsField.style.justifyContent = "space-evenly"
-      sellButtonField.style.display = "flex"
-      sellButtonField.style.justifyContent = "space-evenly"
     }
 
     #emitStockSelectedEvent() {
-      const event = new CustomEvent("stockSelected", {
+      const event = new CustomEvent('stockSelected', {
         detail: {
           stock: this.stockSelector.value
         },
@@ -145,7 +171,7 @@ export class RightControlsView {
     }
 
     #emitBuyButtonClickedEvent(id: string) {
-      const event = new CustomEvent("buyButtonClicked", {
+      const event = new CustomEvent('buyButtonClicked', {
         detail: {
           id: id,
           stock: this.stockSelector.value
@@ -156,7 +182,7 @@ export class RightControlsView {
     }
 
     #emitSellButtonClickedEvent(id: string) {
-      const event = new CustomEvent("sellButtonClicked", {
+      const event = new CustomEvent('sellButtonClicked', {
         detail: {
           id: id,
           stock: this.stockSelector.value
@@ -165,52 +191,4 @@ export class RightControlsView {
       })
       this.stockSelector.dispatchEvent(event)
     }
-
-    updatePortfolioView(portfolio : Portfolio, currentDay: number, currentPrice: number) {
-      console.log("updatePortfolioView")
-      const portfolioView = this.#portfolioView
-
-      const liquidAssets = portfolioView.querySelector("#liquidAssets") as HTMLParagraphElement
-      if (!liquidAssets) {
-        throw new Error("Could not find liquidAssets element")
-      }
-      liquidAssets.textContent = `Liquid assets: $${portfolio.getLiquidAssetsUSD().toFixed(2)}`
-
-      const stockQuantity = portfolioView.querySelector("#stockQuantity") as HTMLParagraphElement
-      if (!stockQuantity) {
-        throw new Error("Could not find stockQuantity element")
-      }
-      stockQuantity.textContent = `Stock quantity: ${portfolio.getQuantityBySymbol(this.stockSelector.value)}`
-
-      const stockCurrentValue = portfolioView.querySelector("#stockCurrentValue") as HTMLParagraphElement
-      if (!stockCurrentValue) {
-        throw new Error("Could not find stockCurrentValue element")
-      }
-      stockCurrentValue.textContent = `Current price/stock: $${currentPrice.toFixed(2)}`
-
-      const stockInvestmentCost = portfolioView.querySelector("#stockInvestmentCost") as HTMLParagraphElement
-      if (!stockInvestmentCost) {
-        throw new Error("Could not find stockInvestmentCost element")
-      }
-      stockInvestmentCost.textContent = `Investment cost: $${portfolio.getCostBySymbol(this.stockSelector.value).toFixed(2)}`
-
-      const stockValue = portfolioView.querySelector("#stockValue") as HTMLParagraphElement
-      if (!stockValue) {
-        throw new Error("Could not find stockValue element")
-      }
-      stockValue.textContent = `Investment value: $${portfolio.getTotalValueBySymbol(this.stockSelector.value, currentDay).toFixed(2)}`
-
-      const portfolioList = portfolioView.querySelector("#portfolioList") as HTMLUListElement
-      if (!portfolioList) {
-        throw new Error("Could not find portfolioList element")
-      }
-      portfolioList.innerHTML = ""
-      const stockPurchases = portfolio.getPurchasesBySymbol(this.stockSelector.value)
-      stockPurchases.forEach((purchase) => {
-        const listItem = document.createElement("li")
-        listItem.textContent = `Purchased ${purchase.quantity} shares for $${purchase.buyPricePerStock.toFixed(2)}`
-        portfolioList.appendChild(listItem)
-      })
-    }
-
 }
