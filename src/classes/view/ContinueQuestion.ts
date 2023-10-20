@@ -29,8 +29,8 @@ export class ContinueQuestions {
     const questionText = this.#createStyledElement('h1', '', 'There is a save, would you like to continue?');
 
     const buttonDiv = this.#createStyledElement('div', 'button-div');
-    const yesButton = this.#createButton('Yes, load save', 'green', 'continueGame');
-    const noButton = this.#createButton('No, start over', 'red', 'playAgain');
+    const yesButton = this.#createButton('Yes, load save', 'green-button', 'continueGame');
+    const noButton = this.#createButton('No, start over', 'red-button', 'playAgain');
 
     buttonDiv.appendChild(yesButton)
     buttonDiv.appendChild(noButton)
