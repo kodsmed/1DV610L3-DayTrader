@@ -17,8 +17,6 @@ if (container) {
   container.appendChild(graphComponent)
 }
 
-
-graphComponent.setAxisTitles({xAxis: 'Month and Day', yAxis: 'Value in $'})
 const apiCaller = new ApiCaller()
 
 
