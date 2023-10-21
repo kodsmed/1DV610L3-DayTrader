@@ -74,6 +74,7 @@ export class GameController {
   }
 
   #addEventListeners() {
+    this.#removeAllEventListeners()
     document.addEventListener("stockSelected", (event: Event) => {
       const customEvent = event as CustomEvent
       if (customEvent.detail.stock) {
@@ -164,6 +165,18 @@ export class GameController {
     window.onbeforeunload = () => {
       this.#saveGameState()
     }
+  }
+
+  #removeAllEventListeners() {
+    document.removeEventListener("stockSelected", () => {})
+    document.removeEventListener("gameSpeedChange", () => {})
+    document.removeEventListener("graphViewChange", () => {})
+    document.removeEventListener("advanceTime", () => {})
+    document.removeEventListener("newHighScore", () => {})
+    document.removeEventListener("buyButtonClicked", () => {})
+    document.removeEventListener("sellButtonClicked", () => {})
+    document.removeEventListener("playAgain", () => {})
+    document.removeEventListener("continueGame", () => {})
   }
 
   #updateTheGraph() {
