@@ -21,7 +21,7 @@
   "homepage": "https://github.com/kodsmed/1DV610L3-DayTrader#readme",
   "dependencies": {
     "validation-collection": "1.0.2",
-    "graphdrawer": "github:kodsmed/graphdrawer#5ac181969e3ace6afdd29c55ddc01b106564cd6b"
+    "graphdrawer": "github:kodsmed/graphdrawer#8c61ff736ea615c34643ea9a4eba82a78b34dd90"
   },
   "devDependencies": {
     "@types/node": "^20.8.5",
