@@ -133,7 +133,6 @@ export class GameController {
       const customEvent = event as CustomEvent
       if (customEvent.detail.id === 'sellAll') {
         const quantity = this.#portfolio.getQuantityBySymbol(this.#selectedStock.symbol)
-        console.log(quantity)
         this.#sellStock(quantity)
         return
       }
@@ -320,7 +319,6 @@ export class GameController {
 
   async #saveGameState() {
     if (this.#currentDay <= 3) {
-      // Don't save game state until after the first 3 days, the array is too small to render.
       return
     }
     if (this.#currentDay >= this.#selectedStock.prices.length - 1) {
