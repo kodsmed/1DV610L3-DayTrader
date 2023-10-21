@@ -3,6 +3,7 @@ import { StockPurchase } from "./../model/StockPurchase.js"
 import { Portfolio } from "./../model/Portfolio.js"
 import { ControlsView } from "./../view/ControlsView.js"
 import { RightControlsView } from "./../view/RightControlsView.js"
+import { MessageRenderer } from "../view/MessageRenderer.js"
 import { Score } from "./../model/Score.js"
 import { GameEndView } from "./../view/GameEndView.js"
 import { ValueOnDay } from "./../model/ValueOnDay.js"
@@ -44,7 +45,13 @@ export class GameController {
     this.#selectedStock = this.#stocks[0]
     this.#currentDay = 0
     this.#portfolio.valueOverTime = []
-    this.#showFiveSecondsWelcomeMessage()
+    const welcomeScreen = new MessageRenderer()
+    const message = "Welcome to Day Trader!"
+    const seconds = 1
+    welcomeScreen.showWMessageForSecondsBeforeCallback(message, seconds, this.#resumeStartGame.bind(this))
+  }
+
+  #resumeStartGame() {
     this.#addEventListeners()
     if (this.#isThereASavedGame()) {
       new ContinueQuestions().displayContinueQuestion()
@@ -53,11 +60,6 @@ export class GameController {
     }
   }
 
-  #showFiveSecondsWelcomeMessage() {
-    this.#graphComponent.clearCanvas()
-
-    const canvas = document.querySelector("#canvas")
-  }
   #newGame() {
     this.#advanceTimeByDays(1)
     this.#finalizeGameStart()
