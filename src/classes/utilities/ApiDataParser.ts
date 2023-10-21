@@ -2,7 +2,7 @@ import { RawApiData } from "../model/RawApiData.js"
 import { TimeConverter } from "./TimeConverter.js"
 import { Stock } from "../model/Stock.js"
 import { ValueOnDay } from "../model/ValueOnDay.js"
-import { StockUtilities } from "./stockUtilities.js"
+import { StockUtilities } from "./StockUtilities.js"
 
 export class ApiDataParser {
     parseToStock(rawData: RawApiData) {
