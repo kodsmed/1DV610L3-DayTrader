@@ -39,6 +39,7 @@ export class GameController {
     }
     this.#selectedHeader = selectedHeader
     this.#selectedHeader.textContent = this.#selectedStock.name
+    this.#addEventListeners()
   }
 
   async startGame() {
@@ -53,7 +54,6 @@ export class GameController {
   }
 
   #resumeStartGame() {
-    this.#addEventListeners()
     if (this.#isThereASavedGame()) {
       new ContinueQuestions().displayContinueQuestion()
     } else {
