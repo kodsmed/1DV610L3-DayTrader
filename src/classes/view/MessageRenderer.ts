@@ -29,7 +29,6 @@ export class MessageRenderer {
     context.textAlign = "center"
     context.fillText(message, canvas.width / 2, canvas.height / 2)
 
-    // wait 5 seconds
     setTimeout(() => {
       callBackAfterDelay()
     }, delay)
