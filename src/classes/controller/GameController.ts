@@ -23,6 +23,7 @@ export class GameController {
   #rightControlsView: RightControlsView
   #controlsView: ControlsView
   #selectedHeader
+  #advanceTimeTimeout: any
 
   constructor(stocks: Stock[]) {
     this.#rightControlsView = new RightControlsView()
@@ -170,15 +171,21 @@ export class GameController {
     this.#graphComponent.setAxisTitles({ xAxis: 'Month and Day', yAxis: 'Value in $' })
     const allDatesArray = this.#selectedStock.datesArray
     const allValueArray = this.#selectedStock.valueArray
-    const minimumRenderableArrayLength = 2
-    const rangeToRender = minimumRenderableArrayLength + Math.floor(this.#currentDay * (this.#zoomLevel / 100))
-    const allowedRange = Math.min(rangeToRender, this.#currentDay)
-    const focusedRangeStartPoint = Math.floor(this.#currentDay - allowedRange * (this.#focusPoint / 100))
-    const focusedRangeEndPoint = focusedRangeStartPoint + allowedRange
-    const datesArray = allDatesArray.slice(focusedRangeStartPoint, focusedRangeEndPoint + 1)
-    const valueArray = allValueArray.slice(focusedRangeStartPoint, focusedRangeEndPoint + 1)
+    const [from, to] = this.#getGraphViewRange(this.#currentDay, this.#zoomLevel, this.#focusPoint)
+    const datesArray = allDatesArray.slice(from, to)
+    const valueArray = allValueArray.slice(from, to)
     this.#graphComponent.setXAxisLabels(datesArray)
     this.#graphComponent.renderArrayAsGraph(valueArray)
+  }
+
+  #getGraphViewRange(currentDay: number, zoomLevel: number, focusPoint: number): [number, number] {
+    const miniumRangeRequired = 2
+    const selectedRange = Math.floor(zoomLevel / 100 * currentDay)
+    const calculatedRange = Math.max(selectedRange, miniumRangeRequired)
+    const selectedFocusPoint = Math.floor(focusPoint / 100 * currentDay)
+    const from = Math.max(0, selectedFocusPoint - calculatedRange)
+    const to = Math.min(currentDay, selectedFocusPoint + calculatedRange) + 1
+    return [from, to]
   }
 
   #updateThePortfolioView() {
@@ -190,9 +197,23 @@ export class GameController {
   }
 
   #advanceTime() {
+    if (!this.#isTimeAllowedToAdvance()) {
+      return
+    }
     const speedFactors = [1, 2, 7, 14, 30]
     const speedFactor = speedFactors[this.#gameSpeed - 1]
     this.#advanceTimeByDays(speedFactor)
+  }
+
+  #isTimeAllowedToAdvance() {
+    // only allow advancing time once every 0.1 seconds
+    if (this.#advanceTimeTimeout) {
+      return false
+    }
+    this.#advanceTimeTimeout = setTimeout(() => {
+      this.#advanceTimeTimeout = false
+    }, 100)
+    return true
   }
 
   #advanceTimeByDays(days: number) {
