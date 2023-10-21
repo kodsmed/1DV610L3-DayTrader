@@ -23,34 +23,60 @@ export class GameEndView {
   }
 
   #buildEndGameMessage() {
+    const endGameMessage = this.#buildEndGameMessageFromTemplate()
+    this.#appendEndGameScoreToParent(endGameMessage)
+    this.#appendPercentageChangeToParent(endGameMessage)
+
+    const playersScore = this.#portfolio.getTotalValueUSD(this.#currentDay)
+    const lowestHighScore = this.#scores[this.#scores.length - 1].score
+    if (playersScore > lowestHighScore) {
+      this.#handleNewHighScore(endGameMessage)
+    } else {
+      this.#appendScoreTableToParent(endGameMessage)
+      this.#appendPlayAgainButtonToParent(endGameMessage)
+    }
+    return endGameMessage
+  }
+
+  #buildEndGameMessageFromTemplate() {
     const endGameMessageTemplate = document.createElement('template')
     endGameMessageTemplate.innerHTML = `
       <div id='endGameMessage'>
         <h2 id='endGameText'>Game Over</h2>
-        <p id='endGameScore'></p>
-        <p id='percentageChange'></p>
       </div>
     `
     const endGameMessage = endGameMessageTemplate.content.firstElementChild as HTMLDivElement
-    const score = this.#portfolio.getTotalValueUSD(this.#currentDay)
-    const endGameScore = endGameMessage.querySelector('#endGameScore') as HTMLParagraphElement
-    endGameScore.textContent = `Your final score is $${score}`
+    return endGameMessage
+  }
 
-    const percentageChange = endGameMessage.querySelector('#percentageChange') as HTMLParagraphElement
+  #appendEndGameScoreToParent(parent: HTMLDivElement) {
+    const score = this.#portfolio.getTotalValueUSD(this.#currentDay)
+    const endGameScore = document.createElement('p')
+    endGameScore.id = 'endGameScore'
+    endGameScore.textContent = `Your final score is $${score}`
+    parent.appendChild(endGameScore)
+  }
+
+  #appendPercentageChangeToParent(parent: HTMLDivElement) {
+    const percentageChange = document.createElement('p')
+    percentageChange.id = 'percentageChange'
     const percentageChangeValue = this.#portfolio.getPercentageChange(this.#currentDay)
     percentageChange.textContent = `You changed your portfolio value by `
     if (percentageChangeValue > 0) {
       percentageChange.textContent += `+${percentageChangeValue}%`
       percentageChange.style.color = 'green'
-    } else if (percentageChangeValue < 0){
+    } else if (percentageChangeValue < 0) {
       percentageChange.textContent += `-${percentageChangeValue}%`
       percentageChange.style.color = 'red'
+    } else {
+      percentageChange.textContent += `${percentageChangeValue}%`
     }
-    endGameMessage.appendChild(percentageChange)
+    parent.appendChild(percentageChange)
+  }
 
-    if (this.#portfolio.getTotalValueUSD(this.#currentDay) > this.#scores[this.#scores.length - 1].score) {
-      const template = document.createElement('template')
-      template.innerHTML = `
+  #handleNewHighScore(parent: HTMLDivElement) {
+    const template = document.createElement('template')
+    template.innerHTML = `
         <div id='newHighScore'>
           <h3>New High Score!</h3>
             <label for='playerName'>Enter your name:</label>
@@ -58,52 +84,52 @@ export class GameEndView {
             <input type='button' id='playerNameSubmit' value='Submit'>
         </div>
       `
-      endGameMessage.appendChild(template.content)
-      endGameMessage.querySelector('#playerNameSubmit')?.addEventListener('click', (event) => {
-        event.preventDefault()
-        this.#handleHighScoreFormSubmit(event)
-      })
-    } else {
-      const scoreTable = this.#buildScoreTable(this.#scores)
-      endGameMessage.appendChild(scoreTable)
-      endGameMessage.appendChild(this.#buildPlayAgainButton())
-    }
-    return endGameMessage
+    parent.appendChild(template.content)
+    parent.querySelector('#playerNameSubmit')?.addEventListener('click', (event) => {
+      event.preventDefault()
+      this.#handleHighScoreFormSubmit(event)
+    })
+  }
+
+  #appendScoreTableToParent(parent: HTMLDivElement) {
+    const scoreTable = this.#buildScoreTable(this.#scores)
+    parent.appendChild(scoreTable)
+  }
+
+  #appendPlayAgainButtonToParent(parent: HTMLDivElement) {
+    const playAgainButton = this.#buildPlayAgainButton()
+    parent.appendChild(playAgainButton)
   }
 
   #handleHighScoreFormSubmit(event: Event) {
+    const playerName = this.#getPlayersName()
+    const score = this.#portfolio.getTotalValueUSD(this.#currentDay)
+    this.#scores = this.#sortNewScoreIntoScores(playerName, score, this.#scores)
+    this.#emitNewHighScoreEvent(this.#scores)
+
+    document.querySelector('#newHighScore')?.remove()
+
+    const endGameMessage = document.querySelector('#endGameMessage') as HTMLDivElement
+    if (!endGameMessage) {
+      throw new Error('Could not find endGameMessage element')
+    }
+    this.#appendScoreTableToParent(endGameMessage)
+    this.#appendPlayAgainButtonToParent(endGameMessage)
+  }
+
+  #getPlayersName() {
     const textField = document.querySelector('#playerName') as HTMLInputElement
 
     const playerName = `${textField.value}` as string
+    return playerName
+  }
 
-    const score = this.#portfolio.getTotalValueUSD(this.#currentDay)
+  #sortNewScoreIntoScores(playerName: string, score: number, scores: Score[]) {
     const newScore = new Score(playerName, score)
     this.#scores.push(newScore)
     this.#scores.sort((a, b) => b.score - a.score)
     this.#scores.pop()
-    this.#emitNewHighScoreEvent(this.#scores)
-    const scoreTable = this.#buildScoreTable(this.#scores)
-    const endGameMessage = document.querySelector('#endGameMessage')
-    if (!endGameMessage) {
-      throw new Error('Could not find endGameMessage element')
-    }
-    endGameMessage.appendChild(scoreTable)
-    document.querySelector('#newHighScore')?.remove()
-    endGameMessage.appendChild(this.#buildPlayAgainButton())
-  }
-
-  #buildPlayAgainButton() {
-
-    const playAgainButton = document.createElement('button')
-    playAgainButton.id = 'playAgainButton'
-    playAgainButton.textContent = 'Play Again'
-    playAgainButton.addEventListener('click', () => {
-      const event = new CustomEvent('playAgain', {
-        bubbles: true
-      })
-      playAgainButton.dispatchEvent(event)
-    })
-    return playAgainButton
+    return this.#scores
   }
 
   #buildScoreTable(scores: Score[]) {
@@ -132,6 +158,20 @@ export class GameEndView {
       scoreTable.appendChild(row)
     })
     return scoreTable
+  }
+
+  #buildPlayAgainButton() {
+
+    const playAgainButton = document.createElement('button')
+    playAgainButton.id = 'playAgainButton'
+    playAgainButton.textContent = 'Play Again'
+    playAgainButton.addEventListener('click', () => {
+      const event = new CustomEvent('playAgain', {
+        bubbles: true
+      })
+      playAgainButton.dispatchEvent(event)
+    })
+    return playAgainButton
   }
 
   #emitNewHighScoreEvent(scores: Score[]) {
