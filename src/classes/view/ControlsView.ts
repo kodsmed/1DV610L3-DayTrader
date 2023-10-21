@@ -143,7 +143,7 @@ export class ControlsView {
     #buildAdvanceTimeButton() {
       const button = document.createElement('button')
       button.textContent = 'Advance Time'
-      button.addEventListener('click', () => {
+      button.addEventListener('mousedown', () => {
         this.#emitAdvanceTime()
       })
       return button
